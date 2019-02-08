@@ -273,12 +273,13 @@ var sassLoader = {
   }) {
     return new Promise(function ($return, $error) {
       const sass = importCwd('node-sass');
+      let $this = this;
       return $return(new Promise((resolve$$1, reject) => {
-        workQueue.add(() => pify(sass.render.bind(sass))(Object.assign({}, this.options, {
-          file: this.id,
+        workQueue.add(() => pify(sass.render.bind(sass))(Object.assign({}, $this.options, {
+          file: $this.id,
           data: code,
-          indentedSyntax: /\.sass$/.test(this.id),
-          sourceMap: this.sourceMap,
+          indentedSyntax: /\.sass$/.test($this.id),
+          sourceMap: $this.sourceMap,
           importer: [(url, importer, done) => {
             if (!moduleRe.test(url)) return done({
               file: url
@@ -312,13 +313,13 @@ var sassLoader = {
                 next();
               }
             });
-          }].concat(this.options.importer || [])
+          }].concat($this.options.importer || [])
         })).then(res => resolve$$1({
           code: res.css.toString(),
           map: res.map && res.map.toString()
         })).catch(reject));
       }));
-    });
+    }.bind(this));
   }
 
 };

@@ -23,15 +23,16 @@ export default {
   test: /\.s[ac]ss$/,
   async process({ code }) {
     const sass = importCwd('node-sass')
+    let $this = this
 
     return new Promise((resolve, reject) => {
       workQueue.add(() =>
         pify(sass.render.bind(sass))({
-          ...this.options,
-          file: this.id,
+          ...$this.options,
+          file: $this.id,
           data: code,
-          indentedSyntax: /\.sass$/.test(this.id),
-          sourceMap: this.sourceMap,
+          indentedSyntax: /\.sass$/.test($this.id),
+          sourceMap: $this.sourceMap,
           importer: [
             (url, importer, done) => {
               if (!moduleRe.test(url)) return done({ file: url })
@@ -68,7 +69,7 @@ export default {
                   }
                 })
             }
-          ].concat(this.options.importer || [])
+          ].concat($this.options.importer || [])
         }).then(res =>
           resolve({
             code: res.css.toString(),
